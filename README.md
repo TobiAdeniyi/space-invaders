@@ -37,7 +37,7 @@ Given that Go follows a strict workspace structure, we'll need to structure our 
 space-invaders/
     |-- bin/
     |-- src/
-        |-- space-invadeers/
+        |-- space-invaders/
     |-- pkg/
 ```
 
