@@ -19,7 +19,49 @@ Below, I've detalied the steps I've taken to implement this game from scratch.
 
 ### Project Setup
 
-...
+To setup this project we have to create a project workspace, then install the neccessery Go libraies.
+
+#### 1. Install Go
+
+This can be done with a simple brew install, as shown below:
+
+```sh
+brew install go
+```
+
+#### 2. Setup workspace
+
+Given that Go follows a strict workspace structure, we'll need to structure our project directory as follows:
+
+```plain
+space-invaders/
+    |-- bin/
+    |-- src/
+        |-- space-invaders/
+    |-- pkg/
+```
+
+#### 3. Initialise Go module
+
+To track out project's dependencies we will need our project module (a `go.mod` file). We can initialise our poject module by running the following command inside of `src/space-invaders`:
+
+```sh
+go mod init github.com/TobiAdeniyi/space-invaders
+```
+
+#### 4. Installing Graphic Library
+
+To install the Go binding of the C-Based library, `raylib`, we need to first install the C library followed by it's accomponying Go bindings.
+
+```sh
+brew install raylib # installing the C library
+```
+
+Then:
+
+```sh
+go get -u github.com/gen2brain/raylib-go/raylib # installing the Go-bindings
+```
 
 ### Game Architecture
 
