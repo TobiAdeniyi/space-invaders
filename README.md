@@ -5,7 +5,7 @@ The game is one of the recommended projects sugested by Austin Z. Henley in his 
 
 ## Basic Design
 
-In his blog, Ausin suggest to the reader that they focus on implementing a "well-defined fame from start to finish" rather that "getting bogged down" by the game design and art. To avoid this, we will first implement the game in a very rudamentory way (i.e., using simple shapes to represent elements such as the player, bullets and enimies/invaders).
+In his blog, Ausin suggest to the reader that they focus on implementing a "well-defined fame from start to finish" rather that "getting bogged down" by the game design and art. To avoid this, we will first implement the game in a very rudamentory way (i.e., using simple shapes to represent elements such as the player, bullets and enemies/invaders).
 
 ...
 
