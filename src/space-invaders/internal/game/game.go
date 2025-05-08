@@ -1,72 +1,97 @@
 package game
 
 import (
+	"fmt"
 	"slices"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-const (
-	SCREEN_WIDTH  = 800
-	SCREEN_HEIGHT = 600
-)
-
 type Game struct {
-	Player   Player
-	Invaders Invaders
+	Player       Player
+	Invaders     Invaders
+	ScreanWidth  int
+	ScreanHeight int
 }
 
-func InitGame() Game {
+func InitGame(screenWidth, screenHeight int) Game {
 	return Game{
-		Player:   NewPlayer(),
-		Invaders: NewInvaders(),
+		Player: NewPlayer(
+			float32(screenWidth),
+			float32(screenHeight),
+		),
+		Invaders:     NewInvaders(float32(screenWidth)),
+		ScreanWidth:  screenWidth,
+		ScreanHeight: screenHeight,
 	}
 }
 
-func (game *Game) Update() {
+func (g *Game) Update() {
+	if g.Invaders.fleetCount == 0 {
+		// Player has killed all invaders
+		fmt.Println("Player has killed all invaders")
+		g.GameOver()
+		return
+	}
+
 	// Update player and bullet position
 	if rl.IsKeyDown(rl.KeyRight) {
-		game.Player.MoveRight()
+		g.Player.MoveRight()
 	}
 
 	if rl.IsKeyDown(rl.KeyLeft) {
-		game.Player.MoveLeft()
+		g.Player.MoveLeft()
 	}
 
 	if rl.IsKeyPressed(rl.KeySpace) {
-		game.Player.Shoot()
+		g.Player.Shoot()
 	}
 
 	// Remove bullets that are inactive
-	for i := len(game.Player.bullets) - 1; i >= 0; i-- {
-		bullet := game.Player.bullets[i]
+	for i := len(g.Player.bullets) - 1; i >= 0; i-- {
+		bullet := g.Player.bullets[i]
 		bullet.Update()
 		if !bullet.active {
-			game.Player.bullets = slices.Delete(game.Player.bullets, i, i+1)
+			g.Player.bullets = slices.Delete(g.Player.bullets, i, i+1)
 		}
 	}
 
 	// Update invaders possition
-	game.Invaders.Update()
+	g.Invaders.Update()
 
 	// Check for bullet collisions with invaders
-	for i := len(game.Player.bullets) - 1; i >= 0; i-- {
-		bullet := game.Player.bullets[i]
-		game.Invaders.CheckCollision(bullet)
+	for i := len(g.Player.bullets) - 1; i >= 0; i-- {
+		bullet := g.Player.bullets[i]
+		g.Invaders.CheckCollision(bullet)
 	}
 
-	// TODO: Check for invader collisions with player
+	// Check player collision once invaders are low enough to colid with player
+	if g.Invaders.possition.y+ENEMY_HEIGHT > g.Player.Body.possition.y {
+		if lowestInvader := g.Invaders.GetLowestInvader(); lowestInvader == nil {
+			// Player has killed all invaders
+			fmt.Println("Player has killed all invaders")
+			g.GameOver()
+		} else if lowestInvader.Body.possition.x > g.Player.Body.possition.y {
+			// Player has been hit by an invader
+			fmt.Printf(
+				"Player has been hit by an invader: (%.2f, %.2f)\n",
+				lowestInvader.Body.possition.x,
+				lowestInvader.Body.possition.y,
+			)
+			g.GameOver()
+		}
+	}
 }
 
-func (game *Game) GetBullets() []*Bullet {
-	return game.Player.bullets
+func (g *Game) GetBullets() []*Bullet {
+	return g.Player.bullets
 }
 
-func (game *Game) GetLivingInvaders() []*Enemy {
+func (g *Game) GetInvadersToDraw() []*Enemy {
 	invaders := []*Enemy{}
-	for _, row := range game.Invaders.army {
-		for _, enemy := range row {
-			if enemy.alive {
+	for _, fleet := range g.Invaders.army {
+		for _, enemy := range fleet.members {
+			if enemy.alive || enemy.DrawDeath {
 				invaders = append(invaders, enemy)
 			}
 		}
@@ -75,3 +100,16 @@ func (game *Game) GetLivingInvaders() []*Enemy {
 }
 
 // TODO: Add game over functionality
+func (g *Game) GameOver() {
+	fmt.Println("Game Over")
+
+	if g.Player.alive {
+		fmt.Println("You won!")
+	} else {
+		fmt.Println("You lost!")
+	}
+}
+
+func (g *Game) IsGameOver() bool {
+	return !g.Player.alive || g.Invaders.fleetCount == 0
+}

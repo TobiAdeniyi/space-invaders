@@ -2,7 +2,7 @@ package game
 
 const (
 	// BULLET_SPPED is the fixed speed of the bullet
-	BULLET_SPPED = 1
+	BULLET_SPPED = 5
 	// BULLET_WIDTH is the width of the bullet
 	BULLET_WIDTH = 5
 	// BULLET_HEIGHT is the height of the bullet

@@ -8,17 +8,40 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+const (
+	SCREEN_WIDTH  = 800
+	SCREEN_HEIGHT = 600
+)
+
 func main() {
-	g := game.InitGame()
-	rl.InitWindow(game.SCREEN_WIDTH, game.SCREEN_HEIGHT, "Space Invaders")
+	g := game.InitGame(SCREEN_WIDTH, SCREEN_HEIGHT)
+	rl.SetTargetFPS(60)
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Space Invaders")
+	assets := render.LoadAssets()
 
 	for !rl.WindowShouldClose() {
-		// Update the game state
-		g.Update()
+		if rl.IsKeyPressed(rl.KeyEscape) {
+			break
+		}
 
-		// Draw the game
-		render.Draw(g)
+		if g.IsGameOver() {
+			render.DrawGameOver(g)
+		} else {
+			// Update the game state
+			g.Update()
+			// Draw the game
+			render.Draw(g, assets)
+		}
 	}
 
-	fmt.Println("Game Over!")
+	fmt.Println("Closing Game!")
 }
+
+
+// TODO:
+// 1. Change color of the enemies texture to white
+// 2. Draw disapering enemies texture when they are killed
+// 3. Make enemy body size varies based on game
+// 4. Increase the speed of the enemies over time
+// 5. Add bulders as shown in game
+// 6. Update game over logic
